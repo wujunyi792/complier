@@ -70,19 +70,19 @@ func (l *Lexer) Analyse() []*Token {
 			continue
 		}
 
-		if IsLetter(c) {
+		if util.IsLetter(c) {
 			l.PutBack(c)
 			tokens = append(tokens, l.MakeVarOrKeyword())
 			continue
 		}
-		if IsNumber(c) {
+		if util.IsNumber(c) {
 			l.PutBack(c)
 			tokens = append(tokens, l.MakeNumber())
 			continue
 		}
 
 		// 遇到操作符，可能是数字
-		if (c == "+" || c == "-" || c == ".") && IsNumber(lookahead) {
+		if (c == "+" || c == "-" || c == ".") && util.IsNumber(lookahead) {
 			var lastToken *Token = nil
 			if len(tokens) > 0 {
 				lastToken = tokens[len(tokens)-1]
@@ -95,7 +95,7 @@ func (l *Lexer) Analyse() []*Token {
 			}
 		}
 
-		if IsOperator(c) {
+		if util.IsOperator(c) {
 			l.PutBack(c)
 			tokens = append(tokens, l.MakeOp())
 			continue
@@ -156,7 +156,7 @@ func (l *Lexer) MakeVarOrKeyword() *Token {
 	s := ""
 	for l.HasNext() {
 		lookahead := l.Peek()
-		if IsLiteral(lookahead) {
+		if util.IsLiteral(lookahead) {
 			s += lookahead
 		} else if lookahead == "." {
 			return l.MakeErr(s)
@@ -166,11 +166,11 @@ func (l *Lexer) MakeVarOrKeyword() *Token {
 		l.Next()
 	}
 
-	if IsKeyTypes(s) {
+	if util.IsKeyTypes(s) {
 		return NewToken(TYPE, s)
 	}
 
-	if IsKeyword(s) {
+	if util.IsKeyword(s) {
 		return NewToken(KEYWORD, s)
 	}
 
@@ -353,7 +353,7 @@ func (l *Lexer) MakeErr(prefix ...string) *Token {
 	}
 	for l.HasNext() {
 		c := l.Next()
-		if IsOperator(c) || IsBracket(c) {
+		if util.IsOperator(c) || util.IsBracket(c) {
 			l.PutBack(c)
 			break
 		} else {
@@ -372,7 +372,7 @@ func (l *Lexer) MakeNumber() *Token {
 		case 0:
 			if "0" == lookahead {
 				state = 1
-			} else if IsNumber(lookahead) {
+			} else if util.IsNumber(lookahead) {
 				state = 2
 			} else if `+` == lookahead || `-` == lookahead {
 				state = 3
@@ -382,7 +382,7 @@ func (l *Lexer) MakeNumber() *Token {
 		case 1:
 			if lookahead == "0" {
 				state = 1
-			} else if IsNumber(lookahead) {
+			} else if util.IsNumber(lookahead) {
 				state = 2
 			} else if lookahead == "." {
 				state = 4
@@ -390,51 +390,62 @@ func (l *Lexer) MakeNumber() *Token {
 				return NewToken(INTEGER, s)
 			}
 		case 2:
-			if IsNumber(lookahead) {
+			if util.IsNumber(lookahead) {
 				state = 2
 			} else if lookahead == "." {
 				state = 4
-			} else if IsLetter(lookahead) {
-				state = -1
+			} else if util.IsLetter(lookahead) {
+				state = -2
 			} else {
 				return NewToken(INTEGER, s)
 			}
 		case 3:
-			if IsNumber(lookahead) {
+			if util.IsNumber(lookahead) {
 				state = 2
 			} else if lookahead == "." {
 				state = 5
 			} else {
-				state = -1
+				state = -2
 			}
 		case 4:
 			if "." == lookahead {
-				state = -1
-			} else if IsNumber(lookahead) {
+				state = -2
+			} else if util.IsNumber(lookahead) {
 				state = 6
-			} else if IsLetter(lookahead) || IsBracket(lookahead) || IsOperator(lookahead) {
-				state = -1
+			} else if util.IsLetter(lookahead) || util.IsBracket(lookahead) || util.IsOperator(lookahead) {
+				state = -2
 			} else {
 				return NewToken(FLOAT, s)
 			}
 		case 5:
-			if IsNumber(lookahead) {
+			if util.IsNumber(lookahead) {
 				state = 6
 			} else {
-				state = -1
+				state = -2
 			}
 		case 6:
-			if IsNumber(lookahead) {
+			if util.IsNumber(lookahead) {
 				state = 6
 			} else if "." == lookahead {
-				state = -1
+				state = -2
 			} else {
 				return NewToken(FLOAT, s)
 			}
 		case -1:
-			return NewToken(ERROR, s+lookahead)
+			return NewToken(ERROR, s)
+		case -2:
+			for l.HasNext() {
+				c := l.Next()
+				if util.IsOperator(c) || util.IsBracket(c) {
+					l.PutBack(c)
+					break
+				} else {
+					s += c
+				}
+			}
+			return NewToken(ERROR, s)
 		}
-		if state != -1 {
+		if state >= 0 {
 			l.Next()
 			s += lookahead
 		}

@@ -48,16 +48,18 @@ func (tt TokenType) String() string {
 	case COMMENT:
 		return "comment "
 	case ERROR:
-		return "error "
+		return "error"
 	}
 
 	panic("unexpected token type")
 }
 
 type Token struct {
-	Typ   TokenType
-	Value string
-	ID    int
+	Typ    TokenType
+	Value  string
+	ID     int
+	Column int
+	Row    int
 }
 
 func NewToken(t TokenType, v string) *Token {
@@ -90,6 +92,9 @@ func (t *Token) IsOperator() bool {
 }
 
 func (t *Token) String() string {
+	if t.Typ == ERROR {
+		fmt.Printf("ERROR: %d:%d ", t.Row, t.Column)
+	}
 	return fmt.Sprintf("< %v, %v, %v >", t.Typ, t.Value, t.ID)
 }
 

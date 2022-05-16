@@ -1,4 +1,4 @@
-package lexer
+package util
 
 import "regexp"
 
@@ -57,4 +57,8 @@ var KeyTypes = map[string]bool{
 
 func IsKeyTypes(key string) bool {
 	return KeyTypes[key]
+}
+
+func IsNewLine(c string) bool {
+	return c == "\n" || c == "\t"
 }

@@ -11,27 +11,42 @@ type Stream struct {
 	queueCache *list.List
 	endToken   string
 	isEnd      bool
+	line       int
+	column     int
 }
 
 func NewStream(r io.Reader, et string) *Stream {
 	s := bufio.NewScanner(r)
 	s.Split(bufio.ScanRunes)
-	return &Stream{scanner: s, queueCache: list.New(), endToken: et, isEnd: false}
+	return &Stream{scanner: s, queueCache: list.New(), endToken: et, isEnd: false, line: 1, column: 1}
+}
+
+func (s *Stream) GetLine() int {
+	return s.line
+}
+
+func (s *Stream) GetColumn() int {
+	return s.column
 }
 
 func (s *Stream) Next() string {
+	char := ""
 	if s.queueCache.Len() != 0 {
 		e := s.queueCache.Front()
-		return s.queueCache.Remove(e).(string)
+		char = s.queueCache.Remove(e).(string)
+	} else if s.scanner.Scan() {
+		char = s.scanner.Text()
+	} else {
+		s.isEnd = true
+
+		char = s.endToken
 	}
-
-	if s.scanner.Scan() {
-		return s.scanner.Text()
+	if IsNewLine(char) {
+		s.line += 1
+		s.column = 0
 	}
-
-	s.isEnd = true
-
-	return s.endToken
+	s.column += 1
+	return char
 }
 
 func (s *Stream) HasNext() bool {
