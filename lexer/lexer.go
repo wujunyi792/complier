@@ -2,6 +2,7 @@ package lexer
 
 import (
 	"bytes"
+	"compiler/lexer/define"
 	"compiler/lexer/util"
 	"io"
 	"os"
@@ -53,36 +54,37 @@ func (l *Lexer) Analyse() []*Token {
 
 		// 分析注释
 		if c == "#" {
+			l.PutBack(c)
 			tokens = append(tokens, l.MakeComment())
 			continue
 		}
 
 		// 抓括号
-		if c == "(" || c == ")" {
+		if define.IsBracket(c) {
 			tokens = append(tokens, NewToken(BRACKET, c))
 			continue
 		}
 
 		// 是个字符串
-		if c == `"` || c == `'` {
+		if define.IsStringWrap(c) {
 			l.PutBack(c)
 			tokens = append(tokens, l.MakeString())
 			continue
 		}
 
-		if util.IsLetter(c) {
+		if define.IsLetter(c) {
 			l.PutBack(c)
 			tokens = append(tokens, l.MakeVarOrKeyword())
 			continue
 		}
-		if util.IsNumber(c) {
+		if define.IsNumber(c) {
 			l.PutBack(c)
 			tokens = append(tokens, l.MakeNumber())
 			continue
 		}
 
 		// 遇到操作符，可能是数字
-		if (c == "+" || c == "-" || c == ".") && util.IsNumber(lookahead) {
+		if (c == "+" || c == "-" || c == ".") && define.IsNumber(lookahead) {
 			var lastToken *Token = nil
 			if len(tokens) > 0 {
 				lastToken = tokens[len(tokens)-1]
@@ -95,7 +97,7 @@ func (l *Lexer) Analyse() []*Token {
 			}
 		}
 
-		if util.IsOperator(c) {
+		if define.IsOperator(c) {
 			l.PutBack(c)
 			tokens = append(tokens, l.MakeOp())
 			continue
@@ -156,7 +158,7 @@ func (l *Lexer) MakeVarOrKeyword() *Token {
 	s := ""
 	for l.HasNext() {
 		lookahead := l.Peek()
-		if util.IsLiteral(lookahead) {
+		if define.IsLiteral(lookahead) {
 			s += lookahead
 		} else if lookahead == "." {
 			return l.MakeErr(s)
@@ -166,11 +168,11 @@ func (l *Lexer) MakeVarOrKeyword() *Token {
 		l.Next()
 	}
 
-	if util.IsKeyTypes(s) {
+	if define.IsKeyTypes(s) {
 		return NewToken(TYPE, s)
 	}
 
-	if util.IsKeyword(s) {
+	if define.IsKeyword(s) {
 		return NewToken(KEYWORD, s)
 	}
 
@@ -356,7 +358,7 @@ func (l *Lexer) MakeErr(prefix ...string) *Token {
 	}
 	for l.HasNext() {
 		c := l.Next()
-		if util.IsOperator(c) || util.IsBracket(c) {
+		if define.IsOperator(c) || define.IsBracket(c) {
 			l.PutBack(c)
 			break
 		} else {
@@ -375,7 +377,7 @@ func (l *Lexer) MakeNumber() *Token {
 		case 0:
 			if "0" == lookahead {
 				state = 1
-			} else if util.IsNumber(lookahead) {
+			} else if define.IsNumber(lookahead) {
 				state = 2
 			} else if `+` == lookahead || `-` == lookahead {
 				state = 3
@@ -385,7 +387,7 @@ func (l *Lexer) MakeNumber() *Token {
 		case 1:
 			if lookahead == "0" {
 				state = 1
-			} else if util.IsNumber(lookahead) {
+			} else if define.IsNumber(lookahead) {
 				state = 2
 			} else if lookahead == "." {
 				state = 4
@@ -393,17 +395,17 @@ func (l *Lexer) MakeNumber() *Token {
 				return NewToken(INTEGER, s)
 			}
 		case 2:
-			if util.IsNumber(lookahead) {
+			if define.IsNumber(lookahead) {
 				state = 2
 			} else if lookahead == "." {
 				state = 4
-			} else if util.IsLetter(lookahead) {
+			} else if define.IsLetter(lookahead) {
 				state = -2
 			} else {
 				return NewToken(INTEGER, s)
 			}
 		case 3:
-			if util.IsNumber(lookahead) {
+			if define.IsNumber(lookahead) {
 				state = 2
 			} else if lookahead == "." {
 				state = 5
@@ -413,21 +415,21 @@ func (l *Lexer) MakeNumber() *Token {
 		case 4:
 			if "." == lookahead {
 				state = -2
-			} else if util.IsNumber(lookahead) {
+			} else if define.IsNumber(lookahead) {
 				state = 6
-			} else if util.IsLetter(lookahead) || util.IsBracket(lookahead) || util.IsOperator(lookahead) {
+			} else if define.IsLetter(lookahead) || define.IsBracket(lookahead) || define.IsOperator(lookahead) {
 				state = -2
 			} else {
 				return NewToken(FLOAT, s)
 			}
 		case 5:
-			if util.IsNumber(lookahead) {
+			if define.IsNumber(lookahead) {
 				state = 6
 			} else {
 				state = -2
 			}
 		case 6:
-			if util.IsNumber(lookahead) {
+			if define.IsNumber(lookahead) {
 				state = 6
 			} else if "." == lookahead {
 				state = -2

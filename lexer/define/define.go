@@ -1,13 +1,14 @@
-package util
+package define
 
 import "regexp"
 
 var (
-	ptnLetter   = regexp.MustCompile("^[_a-zA-Z]$")
-	ptnNumber   = regexp.MustCompile("^[0-9]$")
-	ptnLiteral  = regexp.MustCompile("^[_a-zA-Z0-9]$")
-	ptnOperator = regexp.MustCompile("^[+\\-*<>=!&|^%/;:]$")
-	ptnBracket  = regexp.MustCompile("^[()]$")
+	ptnLetter     = regexp.MustCompile("^[_a-zA-Z]$")
+	ptnNumber     = regexp.MustCompile("^[0-9]$")
+	ptnLiteral    = regexp.MustCompile("^[_a-zA-Z0-9]$")
+	ptnOperator   = regexp.MustCompile("^[+\\-*<>=!&|^%/;:]$")
+	ptnBracket    = regexp.MustCompile("^[()]$")
+	ptnStringWrap = regexp.MustCompile("^['\"]$")
 )
 
 func IsLetter(c string) bool {
@@ -27,6 +28,10 @@ func IsBracket(c string) bool {
 
 func IsOperator(c string) bool {
 	return ptnOperator.MatchString(c)
+}
+
+func IsStringWrap(c string) bool {
+	return ptnStringWrap.MatchString(c)
 }
 
 var KeyWords = map[string]bool{

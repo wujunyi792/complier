@@ -2,6 +2,7 @@ package util
 
 import (
 	"bufio"
+	"compiler/lexer/define"
 	"container/list"
 	"io"
 )
@@ -41,7 +42,7 @@ func (s *Stream) Next() string {
 
 		char = s.endToken
 	}
-	if IsNewLine(char) {
+	if define.IsNewLine(char) {
 		s.line += 1
 		s.column = 0
 	}
