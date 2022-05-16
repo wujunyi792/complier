@@ -346,9 +346,12 @@ func (l *Lexer) MakeOp() *Token {
 
 func (l *Lexer) MakeErr(prefix ...string) *Token {
 	s := ""
+	row := l.GetLine()
+	column := l.GetColumn()
 	if len(prefix) > 0 {
 		for _, pre := range prefix {
 			s += pre
+			column -= len(pre)
 		}
 	}
 	for l.HasNext() {
@@ -360,7 +363,7 @@ func (l *Lexer) MakeErr(prefix ...string) *Token {
 			s += c
 		}
 	}
-	return NewToken(ERROR, s)
+	return NewTokenWithLocation(ERROR, s, row, column)
 }
 
 func (l *Lexer) MakeNumber() *Token {
@@ -434,16 +437,17 @@ func (l *Lexer) MakeNumber() *Token {
 		case -1:
 			return NewToken(ERROR, s)
 		case -2:
-			for l.HasNext() {
-				c := l.Next()
-				if util.IsOperator(c) || util.IsBracket(c) {
-					l.PutBack(c)
-					break
-				} else {
-					s += c
-				}
-			}
-			return NewToken(ERROR, s)
+			return l.MakeErr(s)
+			//for l.HasNext() {
+			//	c := l.Next()
+			//	if util.IsOperator(c) || util.IsBracket(c) {
+			//		l.PutBack(c)
+			//		break
+			//	} else {
+			//		s += c
+			//	}
+			//}
+			//return NewToken(ERROR, s)
 		}
 		if state >= 0 {
 			l.Next()

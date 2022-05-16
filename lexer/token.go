@@ -1,6 +1,9 @@
 package lexer
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/gookit/color"
+)
 
 type TokenType int
 
@@ -75,6 +78,19 @@ func NewToken(t TokenType, v string) *Token {
 	return &Token{Typ: t, Value: v, ID: ID}
 }
 
+func NewTokenWithLocation(t TokenType, v string, row int, column int) *Token {
+	ID := 0
+	if t == 3 {
+		if id, ok := variableMap[v]; !ok {
+			variableMap[v] = len(variableMap) + 1
+			ID = variableMap[v]
+		} else {
+			ID = id
+		}
+	}
+	return &Token{Typ: t, Value: v, ID: ID, Row: row, Column: column}
+}
+
 func (t *Token) IsVariable() bool {
 	return t.Typ == VARIABLE
 }
@@ -91,11 +107,14 @@ func (t *Token) IsOperator() bool {
 	return t.Typ == OPERATOR
 }
 
-func (t *Token) String() string {
+func (t *Token) Show() {
 	if t.Typ == ERROR {
-		fmt.Printf("ERROR: %d:%d ", t.Row, t.Column)
+		color.Red.Printf("【%d:%d】ERROR: You Have an Lexical error near \"%s\" at line %d column %d.\n", t.Row, t.Column, t.Value, t.Row, t.Column)
+	} else if t.Typ == VARIABLE {
+		color.Green.Printf("< %v, %v, id=%v >\n", t.Typ, t.Value, t.ID)
+	} else {
+		fmt.Printf("< %v, %v >\n", t.Typ, t.Value)
 	}
-	return fmt.Sprintf("< %v, %v, %v >", t.Typ, t.Value, t.ID)
 }
 
 func (t *Token) IsValue() bool {

@@ -82,4 +82,5 @@ func (s *Stream) Peek() string {
 
 func (s *Stream) PutBack(e string) {
 	s.queueCache.PushFront(e)
+	s.column -= 1
 }
