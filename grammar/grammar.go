@@ -166,7 +166,7 @@ func (g *Grammar) Analyse(count int) (res []*Production, canKill bool) {
 			}
 		case "(":
 			{
-				if !currentToken.IsBracket() {
+				if !currentToken.IsBracket() || currentToken.Value != "(" {
 					g.Stream.ClearFronts(count - 1)
 					return res, false
 				}
@@ -178,7 +178,7 @@ func (g *Grammar) Analyse(count int) (res []*Production, canKill bool) {
 			}
 		case ")":
 			{
-				if !currentToken.IsBracket() {
+				if !currentToken.IsBracket() || currentToken.Value != ")" {
 					g.Stream.ClearFronts(count - 1)
 					return res, false
 				}
