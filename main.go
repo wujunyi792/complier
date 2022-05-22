@@ -21,11 +21,11 @@ func Grammar(tokens []*lexer.Token) {
 }
 
 func main() {
-	//tokens := MakeToken("i*(i-i)/(i+i)*((i+i-i*i/i))")
+	tokens := MakeToken("i*(i-i)/(i+i)*((i+i-i*i/i))")
 	//tokens := MakeToken("i*i**")
 	//tokens := MakeToken("i+i*i(")
 	//tokens := MakeToken("i+i*i/i-i)")
 	//tokens := MakeToken("i+)i-i(")
-	tokens := MakeToken("(i-i)(i/i)")
+	//tokens := MakeToken("(i-i)(i/i)")
 	Grammar(tokens)
 }

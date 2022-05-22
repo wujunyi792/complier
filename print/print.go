@@ -23,13 +23,13 @@ func PrintGrammar(gram []*grammar.Production) {
 			start = strings.Replace(start, gram[i].Target, "", 1)
 			matched += gram[i].Target
 			color.Green.Printf("%s", transfer(matched))
-			fmt.Println(transfer(start))
+			color.Red.Printf(transfer(start + "\n"))
 			i++
 		} else {
 			fmt.Printf("推导：%v--->%v\n", transfer(gram[i].Origin), transfer(gram[i].Next))
 			start = strings.Replace(start, gram[i].Origin, gram[i].Next, 1)
 			color.Green.Printf("%s", transfer(matched))
-			fmt.Println(transfer(start))
+			color.Red.Printf(transfer(start + "\n"))
 		}
 	}
 }
