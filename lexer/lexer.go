@@ -3,7 +3,7 @@ package lexer
 import (
 	"bytes"
 	"compiler/lexer/define"
-	"compiler/lexer/util"
+	"compiler/util"
 	"io"
 	"os"
 	"path/filepath"
