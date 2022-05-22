@@ -107,6 +107,10 @@ func (t *Token) IsOperator() bool {
 	return t.Typ == OPERATOR
 }
 
+func (t *Token) IsBracket() bool {
+	return t.Typ == BRACKET
+}
+
 func (t *Token) Show() {
 	if t.Typ == ERROR {
 		color.Red.Printf("【%d:%d】ERROR: You Have an Lexical error near \"%s\" at line %d column %d.\n", t.Row, t.Column, t.Value, t.Row, t.Column)

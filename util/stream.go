@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"compiler/lexer/define"
 	"container/list"
+	"fmt"
 	"io"
 )
 
@@ -84,4 +85,23 @@ func (s *Stream) Peek() string {
 func (s *Stream) PutBack(e string) {
 	s.queueCache.PushFront(e)
 	s.column -= 1
+}
+
+func (s *Stream) ClearFronts(count int) {
+	for i := 0; i < count; i++ {
+		s.Next()
+	}
+}
+
+func (s *Stream) Print() {
+	e := s.queueCache.Front()
+	for {
+		if e != nil {
+			fmt.Print(e.Value)
+			e = e.Next()
+		} else {
+			break
+		}
+	}
+	fmt.Println("$")
 }
