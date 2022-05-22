@@ -196,8 +196,8 @@ func (g *Grammar) Analyse(count int) (res []*Production, canKill bool) {
 		for _, s := range reverse(strings.Split(canUse[i], "")) {
 			g.Stream.PutBack(s)
 		}
-		g.Stream.Print()
-		g.PrintToken()
+		//g.Stream.Print()
+		//g.PrintToken()
 		match := false
 		if canUse[i] == "" {
 			match = true
@@ -218,8 +218,8 @@ func (g *Grammar) Analyse(count int) (res []*Production, canKill bool) {
 						killToken = append(killToken, p.(*lexer.Token))
 					}
 				}
-				g.Stream.Print()
-				g.PrintToken()
+				//g.Stream.Print()
+				//g.PrintToken()
 			} else {
 				for _, s := range reverseAny(killToken) {
 					g.tokens.PushFront(s)

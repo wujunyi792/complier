@@ -3,9 +3,7 @@ package main
 import (
 	"compiler/grammar"
 	"compiler/lexer"
-	"fmt"
-	"github.com/gookit/color"
-	"strings"
+	servicePrint "compiler/print"
 )
 
 func MakeToken(code string) []*lexer.Token {
@@ -13,33 +11,16 @@ func MakeToken(code string) []*lexer.Token {
 	//tokens := lexer.Analyse("for(int i=1;i<=10;i++) begin\na_b++;#zszszszszs\nb_C--;#zszszszszs\nB123:=1234567;\na=@;\n123a=0;\na.b;\nend")
 	tokens := lexer.Analyse(code)
 	//tokens := lexer.Analyse("i*i**")
-	for i := 0; i < len(tokens); i++ {
-		tokens[i].Show()
-	}
+	servicePrint.PrintToken(tokens)
 	return tokens
 }
 
 func Grammar(tokens []*lexer.Token) {
 	gram, correct := grammar.Analyse(tokens)
 	if !correct {
-		return
+		panic("语法推导失败")
 	}
-	start := "E"
-	matched := ""
-	for _, g := range gram {
-		if g.Type == "kill" {
-			fmt.Printf("规约：%v\n", g.Target)
-			start = strings.Replace(start, g.Target, "", 1)
-			matched += g.Target
-			color.Green.Printf("%s", matched)
-			fmt.Println(start)
-		} else {
-			fmt.Printf("推导：%v--->%v\n", g.Origin, g.Next)
-			start = strings.Replace(start, g.Origin, g.Next, 1)
-			color.Green.Printf("%s", matched)
-			fmt.Println(start)
-		}
-	}
+	servicePrint.PrintGrammar(gram)
 }
 
 func main() {
