@@ -9,6 +9,11 @@ type Rule struct {
 	Rules map[string][]string
 }
 
+type Formula struct {
+	Left  string
+	Right string
+}
+
 func NewRules() *Rule {
 	return &Rule{Rules: make(map[string][]string)}
 }
@@ -48,4 +53,16 @@ func (r *Rule) TheFirstItemIs(first, item string) string {
 		}
 	}
 	return ""
+}
+
+func (r *Rule) GetProcessMethod(first, end string) *Formula {
+	for _, value := range r.Rules[first] {
+		if value[0] == end[0] {
+			return &Formula{
+				Left:  first,
+				Right: value,
+			}
+		}
+	}
+	return nil
 }

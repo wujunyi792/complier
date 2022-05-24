@@ -1,4 +1,4 @@
-package setFirst
+package first
 
 import (
 	"compiler/grammarLL1/rule"
@@ -86,4 +86,13 @@ func (f FirstSet) String() string {
 func (f FirstSet) haveEmpty(first string) bool {
 	_, ok := f[first]["&"]
 	return ok
+}
+
+func (f FirstSet) IsInFirstSet(first string, target string) bool {
+	for key := range f[first] {
+		if key == target {
+			return true
+		}
+	}
+	return false
 }

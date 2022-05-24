@@ -1,8 +1,8 @@
-package SetFollow
+package follow
 
 import (
+	"compiler/grammarLL1/first"
 	"compiler/grammarLL1/rule"
-	"compiler/grammarLL1/setFirst"
 	"compiler/grammarLL1/util"
 	"fmt"
 	"strings"
@@ -10,7 +10,7 @@ import (
 
 type FollowSet map[string]map[string]struct{}
 
-func GetFollowSet(rule *rule.Rule, start string, firstSet setFirst.FirstSet) FollowSet {
+func GetFollowSet(rule *rule.Rule, start string, firstSet first.FirstSet) FollowSet {
 	followSet := make(FollowSet)
 	if len(firstSet) == 0 {
 		return followSet
@@ -74,9 +74,12 @@ func GetFollowSet(rule *rule.Rule, start string, firstSet setFirst.FirstSet) Fol
 }
 
 func removeEmptyAndMergeSet(a map[string]struct{}, b map[string]struct{}) int {
-	delete(b, "&")
+	//delete(b, "&")
 	count := 0
 	for key, value := range b {
+		if key == "&" {
+			continue
+		}
 		if _, ok := a[key]; !ok {
 			count++
 		}
