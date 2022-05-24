@@ -10,7 +10,7 @@ import (
 
 func TestNewRule(t *testing.T) {
 	g := rule.NewRules()
-	_ = g.AddRules("E->TS\nS->+TS|@\nT->FG\nG->*FG|@\nF->(E)|i")
+	_ = g.AddRules("E->TS\nS->+TS|&\nT->FG\nG->*FG|&\nF->(E)|i")
 	//fmt.Println(t)
 	firstSet := setFirst.GetFirstSet(g)
 	fmt.Println(firstSet.String())
