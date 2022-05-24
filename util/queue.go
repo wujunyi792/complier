@@ -29,7 +29,7 @@ func (queue *Queue) PushFront(value interface{}) {
 	queue.list.PushFront(value)
 }
 
-// Front returns first element of the queue
+// Front returns setFirst element of the queue
 func (queue *Queue) Front() interface{} {
 	it := queue.list.Front()
 	if it != nil {
@@ -51,7 +51,7 @@ func (queue *Queue) Back() interface{} {
 	return nil
 }
 
-// Pop returns and deletes first element of the queue
+// Pop returns and deletes setFirst element of the queue
 func (queue *Queue) Pop() interface{} {
 	it := queue.list.Front()
 	if it != nil {

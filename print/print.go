@@ -34,8 +34,14 @@ func PrintGrammar(gram []*grammar.Production) {
 	}
 }
 
-func PrintToken(tokens []*lexer.Token) {
+func PrintToken(tokens []*lexer.Token) bool {
+	err := false
 	for i := 0; i < len(tokens); i++ {
+		if tokens[i].Typ == lexer.ERROR {
+			err = true
+		}
 		tokens[i].Show()
 	}
+	fmt.Println("\n ")
+	return err
 }

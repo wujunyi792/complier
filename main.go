@@ -4,11 +4,17 @@ import (
 	"compiler/grammar"
 	"compiler/lexer"
 	servicePrint "compiler/print"
+	"github.com/gookit/color"
+	"os"
 )
 
 func MakeToken(code string) []*lexer.Token {
 	tokens := lexer.Analyse(code)
-	servicePrint.PrintToken(tokens)
+	err := servicePrint.PrintToken(tokens)
+	if err {
+		color.Redln("Lexer ERR, please check")
+		os.Exit(-1)
+	}
 	return tokens
 }
 
