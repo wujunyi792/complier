@@ -2,6 +2,7 @@ package main
 
 import (
 	"compiler/grammar"
+	"compiler/grammarLL1"
 	"compiler/lexer"
 	servicePrint "compiler/print"
 	"github.com/gookit/color"
@@ -26,12 +27,22 @@ func Grammar(tokens []*lexer.Token) {
 	servicePrint.PrintGrammar(gram)
 }
 
+func GrammarLL1(tokens []*lexer.Token) {
+	gram, correct := grammarLL1.Analyze(tokens, "E->TG\nG->ATG|&\nT->FS\nS->MFS|&\nF->(E)|i\nA->+|-\nM->*|/", "E")
+	if !correct {
+		panic("语法推导失败")
+	}
+	servicePrint.PrintGrammarLL1(gram)
+}
+
 func main() {
-	tokens := MakeToken("i*(i-i)/(i+i)*((i+i-i*i/i))")
-	//tokens := MakeToken("i*i**")
+	//tokens := MakeToken("i*(i-i)/(i+i)*((i+i-i*i/i))")
+	//tokens := MakeToken("i+i")
+	tokens := MakeToken("i*i**")
 	//tokens := MakeToken("i+i*i(")
 	//tokens := MakeToken("i+i*i/i-i)")
 	//tokens := MakeToken("i+)i-i(")
 	//tokens := MakeToken("(i-i)(i/i)")
-	Grammar(tokens)
+	//Grammar(tokens)
+	GrammarLL1(tokens)
 }

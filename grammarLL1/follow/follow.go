@@ -4,6 +4,7 @@ import (
 	"compiler/grammarLL1/first"
 	"compiler/grammarLL1/rule"
 	"compiler/grammarLL1/util"
+	"compiler/util/transfer"
 	"fmt"
 	"strings"
 )
@@ -102,9 +103,9 @@ func mergeSet(a map[string]struct{}, b map[string]struct{}) int {
 func (f FollowSet) String() string {
 	var build strings.Builder
 	for key, value := range f {
-		build.WriteString(fmt.Sprintf("FOLLOW(%s)={ ", key))
+		build.WriteString(fmt.Sprintf("FOLLOW(%s) = { ", transfer.Transfer(key)))
 		for item := range value {
-			build.WriteString(fmt.Sprintf("%s ", item))
+			build.WriteString(fmt.Sprintf("%s ", transfer.Transfer(item)))
 		}
 		build.WriteString("}\n")
 	}

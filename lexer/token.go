@@ -25,6 +25,7 @@ const (
 	INTEGER  TokenType = 9
 	COMMENT  TokenType = 10
 	ERROR    TokenType = -1
+	END      TokenType = -2
 )
 
 func (tt TokenType) String() string {
@@ -51,7 +52,9 @@ func (tt TokenType) String() string {
 	case COMMENT:
 		return "comment "
 	case ERROR:
-		return "error"
+		return "error   "
+	case END:
+		return "end     "
 	}
 
 	panic("unexpected token type")
@@ -109,6 +112,10 @@ func (t *Token) IsOperator() bool {
 
 func (t *Token) IsBracket() bool {
 	return t.Typ == BRACKET
+}
+
+func (t *Token) IsEnd() bool {
+	return t.Typ == END
 }
 
 func (t *Token) Show() {

@@ -4,7 +4,9 @@ import (
 	"compiler/grammarLL1/first"
 	"compiler/grammarLL1/follow"
 	"compiler/grammarLL1/rule"
-	"strings"
+	"compiler/util/transfer"
+	"fmt"
+	"github.com/liushuochen/gotable"
 )
 
 type SymbolTable map[string]map[string]*rule.Formula
@@ -67,7 +69,7 @@ func GetAnalyzeTable(firstSet first.FirstSet, followSet follow.FollowSet, rules 
 				// 没匹配到
 				if symbolTable[left][set] == nil {
 					for _, out := range rules.Rules[left] {
-						if firstSet.IsInFirstSet(left, set) {
+						if firstSet.IsInFirstSet(string(out[0]), set) {
 							symbolTable[left][set] = &rule.Formula{
 								Left:  left,
 								Right: out,
@@ -86,7 +88,33 @@ func GetAnalyzeTable(firstSet first.FirstSet, followSet follow.FollowSet, rules 
 }
 
 func (s SymbolTable) String() string {
-	var build strings.Builder
-
-	return build.String()
+	column := []string{" "}
+	for rowKey := range s {
+		for colKey := range s[rowKey] {
+			column = append(column, colKey)
+		}
+		break
+	}
+	table, err := gotable.Create(column...)
+	if err != nil {
+		fmt.Println(err.Error())
+		return ""
+	}
+	for rowKey := range s {
+		row := make(map[string]string)
+		row[" "] = rowKey
+		for col, formula := range s[rowKey] {
+			if formula == nil {
+				row[col] = ""
+			} else {
+				row[col] = fmt.Sprintf("%s->%s", transfer.Transfer(formula.Left), transfer.Transfer(formula.Right))
+			}
+		}
+		err = table.AddRow(row)
+		if err != nil {
+			fmt.Println(err.Error())
+			return ""
+		}
+	}
+	return table.String()
 }
